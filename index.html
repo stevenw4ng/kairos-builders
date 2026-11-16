@@ -63,6 +63,35 @@ h1{font:300 clamp(36px,6.2vw,60px)/1.04 var(--display);letter-spacing:-.025em;ma
 .lede{color:var(--ink-2);max-width:60ch;margin:24px 0 0;font-size:17px}
 .meta{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:32px;font:400 12px/1 var(--mono);text-transform:uppercase;color:var(--ink-3)}
 .meta span::before{content:"";display:inline-block;width:6px;height:6px;background:var(--wing);margin-right:8px;vertical-align:1px}
+/* Referral QR in the hero's right column (desktop only; phones use the Open Kairos button).
+   Same vocabulary as the CTA: hairline frame, + corners that spread on hover. */
+.hero-grid{display:grid;gap:48px;position:relative}
+.qr-card{display:none}
+@media (min-width:900px){
+  .hero-grid{grid-template-columns:minmax(0,1fr) 248px;align-items:center;gap:72px}
+  .qr-card{display:flex;flex-direction:column;position:relative;color:var(--ink);text-decoration:none;-webkit-tap-highlight-color:transparent}
+}
+@media (min-width:1100px){.hero-grid{grid-template-columns:minmax(0,1fr) 272px;gap:120px}}
+.qr-card::before{content:"";position:absolute;inset:-70px;background:radial-gradient(closest-side,rgba(132,132,255,.14),transparent);pointer-events:none;z-index:-1}
+.qr-frame{position:relative;display:block;padding:14px;border:1px solid rgba(255,255,255,.3);transition:border-color .3s ease-out}
+.qr-frame .c{position:absolute;font:300 14px/1 var(--mono);color:#fff;pointer-events:none;user-select:none;transition:transform .3s ease-out}
+.qr-frame .c.tl{left:0;top:0;transform:translate(-50%,-50%)}
+.qr-frame .c.tr{right:0;top:0;transform:translate(50%,-50%)}
+.qr-frame .c.bl{left:0;bottom:0;transform:translate(-50%,50%)}
+.qr-frame .c.br{right:0;bottom:0;transform:translate(50%,50%)}
+.qr-card:hover .qr-frame,.qr-card:focus-visible .qr-frame{border-color:#fff}
+.qr-card:hover .c.tl,.qr-card:focus-visible .c.tl{transform:translate(calc(-50% - 3px),calc(-50% - 3px))}
+.qr-card:hover .c.tr,.qr-card:focus-visible .c.tr{transform:translate(calc(50% + 3px),calc(-50% - 3px))}
+.qr-card:hover .c.bl,.qr-card:focus-visible .c.bl{transform:translate(calc(-50% - 3px),calc(50% + 3px))}
+.qr-card:hover .c.br,.qr-card:focus-visible .c.br{transform:translate(calc(50% + 3px),calc(50% + 3px))}
+.qr-card:focus-visible{outline:none}
+.qr-frame .qr{display:block;width:100%;height:auto}
+.qr-cap{display:flex;align-items:center;justify-content:space-between;margin-top:18px;font:400 12px/1 var(--mono);text-transform:uppercase;letter-spacing:.04em;color:var(--ink)}
+.qr-cap span::before{content:"";display:inline-block;width:6px;height:6px;background:var(--wing);margin-right:8px;vertical-align:1px}
+.qr-cap svg{width:16px;height:16px;transition:transform .3s ease-out}
+.qr-card:hover .qr-cap svg{transform:rotate(45deg)}
+.qr-url{margin-top:10px;font:400 11px/1.3 var(--mono);color:var(--ink-3);word-break:break-all}
+@media (prefers-reduced-motion:reduce){.qr-frame,.qr-frame .c,.qr-cap svg{transition:none}}
 
 /* rows (steps and form sections share the careers-list layout) */
 .row{display:grid;grid-template-columns:1fr;gap:14px;padding-top:40px;padding-bottom:40px;border-bottom:1px solid var(--line)}
@@ -180,10 +209,19 @@ footer a:hover{color:var(--ink)}
 
   <main id="main">
     <header class="hero pad">
+      <div class="hero-grid">
+      <div class="hero-copy">
       <span class="chip">Careers · Builders Career Fair</span>
       <h1>Use Kairos. Then tell us how you'd make it better.</h1>
       <p class="lede">Kairos is the prediction markets trading terminal, putting Kalshi and Polymarket in one place. We're backed by a16z crypto and hiring across every team, full-time and internship, based on talent. Applying takes three steps.</p>
       <div class="meta"><span>Full-time</span><span>Internship</span><span>All teams</span><span>18+ to trade</span></div>
+      </div>
+      <a class="qr-card" id="refQr" href="#" target="_blank" rel="noopener" aria-label="Sign up for Kairos with our referral link">
+        <span class="qr-frame"><span class="c tl" aria-hidden="true">+</span><span class="c tr" aria-hidden="true">+</span><span class="c bl" aria-hidden="true">+</span><span class="c br" aria-hidden="true">+</span><svg class="qr" viewBox="0 0 37 37" shape-rendering="crispEdges" role="img" aria-label="QR code to sign up for Kairos"><rect width="37" height="37" fill="#fff"/><path fill="#0e0e0e" d="M4 4h1v1h-1zM5 4h1v1h-1zM6 4h1v1h-1zM7 4h1v1h-1zM8 4h1v1h-1zM9 4h1v1h-1zM10 4h1v1h-1zM16 4h1v1h-1zM19 4h1v1h-1zM20 4h1v1h-1zM22 4h1v1h-1zM23 4h1v1h-1zM26 4h1v1h-1zM27 4h1v1h-1zM28 4h1v1h-1zM29 4h1v1h-1zM30 4h1v1h-1zM31 4h1v1h-1zM32 4h1v1h-1zM4 5h1v1h-1zM10 5h1v1h-1zM12 5h1v1h-1zM13 5h1v1h-1zM14 5h1v1h-1zM19 5h1v1h-1zM21 5h1v1h-1zM22 5h1v1h-1zM23 5h1v1h-1zM24 5h1v1h-1zM26 5h1v1h-1zM32 5h1v1h-1zM4 6h1v1h-1zM6 6h1v1h-1zM7 6h1v1h-1zM8 6h1v1h-1zM10 6h1v1h-1zM14 6h1v1h-1zM15 6h1v1h-1zM18 6h1v1h-1zM20 6h1v1h-1zM22 6h1v1h-1zM24 6h1v1h-1zM26 6h1v1h-1zM28 6h1v1h-1zM29 6h1v1h-1zM30 6h1v1h-1zM32 6h1v1h-1zM4 7h1v1h-1zM6 7h1v1h-1zM7 7h1v1h-1zM8 7h1v1h-1zM10 7h1v1h-1zM13 7h1v1h-1zM15 7h1v1h-1zM16 7h1v1h-1zM17 7h1v1h-1zM19 7h1v1h-1zM20 7h1v1h-1zM22 7h1v1h-1zM23 7h1v1h-1zM26 7h1v1h-1zM28 7h1v1h-1zM29 7h1v1h-1zM30 7h1v1h-1zM32 7h1v1h-1zM4 8h1v1h-1zM6 8h1v1h-1zM7 8h1v1h-1zM8 8h1v1h-1zM10 8h1v1h-1zM12 8h1v1h-1zM13 8h1v1h-1zM22 8h1v1h-1zM23 8h1v1h-1zM26 8h1v1h-1zM28 8h1v1h-1zM29 8h1v1h-1zM30 8h1v1h-1zM32 8h1v1h-1zM4 9h1v1h-1zM10 9h1v1h-1zM16 9h1v1h-1zM17 9h1v1h-1zM20 9h1v1h-1zM21 9h1v1h-1zM22 9h1v1h-1zM23 9h1v1h-1zM26 9h1v1h-1zM32 9h1v1h-1zM4 10h1v1h-1zM5 10h1v1h-1zM6 10h1v1h-1zM7 10h1v1h-1zM8 10h1v1h-1zM9 10h1v1h-1zM10 10h1v1h-1zM12 10h1v1h-1zM14 10h1v1h-1zM16 10h1v1h-1zM18 10h1v1h-1zM20 10h1v1h-1zM22 10h1v1h-1zM24 10h1v1h-1zM26 10h1v1h-1zM27 10h1v1h-1zM28 10h1v1h-1zM29 10h1v1h-1zM30 10h1v1h-1zM31 10h1v1h-1zM32 10h1v1h-1zM13 11h1v1h-1zM17 11h1v1h-1zM19 11h1v1h-1zM21 11h1v1h-1zM22 11h1v1h-1zM4 12h1v1h-1zM6 12h1v1h-1zM8 12h1v1h-1zM10 12h1v1h-1zM13 12h1v1h-1zM15 12h1v1h-1zM16 12h1v1h-1zM18 12h1v1h-1zM21 12h1v1h-1zM22 12h1v1h-1zM28 12h1v1h-1zM31 12h1v1h-1zM5 13h1v1h-1zM7 13h1v1h-1zM8 13h1v1h-1zM13 13h1v1h-1zM14 13h1v1h-1zM15 13h1v1h-1zM19 13h1v1h-1zM20 13h1v1h-1zM24 13h1v1h-1zM25 13h1v1h-1zM26 13h1v1h-1zM29 13h1v1h-1zM32 13h1v1h-1zM4 14h1v1h-1zM6 14h1v1h-1zM7 14h1v1h-1zM8 14h1v1h-1zM9 14h1v1h-1zM10 14h1v1h-1zM15 14h1v1h-1zM16 14h1v1h-1zM17 14h1v1h-1zM21 14h1v1h-1zM24 14h1v1h-1zM30 14h1v1h-1zM31 14h1v1h-1zM32 14h1v1h-1zM5 15h1v1h-1zM7 15h1v1h-1zM8 15h1v1h-1zM9 15h1v1h-1zM12 15h1v1h-1zM13 15h1v1h-1zM15 15h1v1h-1zM16 15h1v1h-1zM19 15h1v1h-1zM21 15h1v1h-1zM22 15h1v1h-1zM23 15h1v1h-1zM24 15h1v1h-1zM26 15h1v1h-1zM28 15h1v1h-1zM31 15h1v1h-1zM4 16h1v1h-1zM7 16h1v1h-1zM8 16h1v1h-1zM10 16h1v1h-1zM11 16h1v1h-1zM12 16h1v1h-1zM19 16h1v1h-1zM21 16h1v1h-1zM25 16h1v1h-1zM26 16h1v1h-1zM29 16h1v1h-1zM31 16h1v1h-1zM32 16h1v1h-1zM4 17h1v1h-1zM6 17h1v1h-1zM7 17h1v1h-1zM8 17h1v1h-1zM9 17h1v1h-1zM11 17h1v1h-1zM12 17h1v1h-1zM16 17h1v1h-1zM17 17h1v1h-1zM19 17h1v1h-1zM24 17h1v1h-1zM25 17h1v1h-1zM26 17h1v1h-1zM27 17h1v1h-1zM29 17h1v1h-1zM32 17h1v1h-1zM6 18h1v1h-1zM7 18h1v1h-1zM8 18h1v1h-1zM10 18h1v1h-1zM12 18h1v1h-1zM13 18h1v1h-1zM14 18h1v1h-1zM15 18h1v1h-1zM18 18h1v1h-1zM19 18h1v1h-1zM22 18h1v1h-1zM24 18h1v1h-1zM26 18h1v1h-1zM28 18h1v1h-1zM29 18h1v1h-1zM31 18h1v1h-1zM32 18h1v1h-1zM7 19h1v1h-1zM12 19h1v1h-1zM14 19h1v1h-1zM15 19h1v1h-1zM17 19h1v1h-1zM18 19h1v1h-1zM20 19h1v1h-1zM21 19h1v1h-1zM22 19h1v1h-1zM24 19h1v1h-1zM27 19h1v1h-1zM29 19h1v1h-1zM31 19h1v1h-1zM5 20h1v1h-1zM6 20h1v1h-1zM7 20h1v1h-1zM9 20h1v1h-1zM10 20h1v1h-1zM11 20h1v1h-1zM12 20h1v1h-1zM14 20h1v1h-1zM16 20h1v1h-1zM18 20h1v1h-1zM19 20h1v1h-1zM21 20h1v1h-1zM23 20h1v1h-1zM24 20h1v1h-1zM25 20h1v1h-1zM26 20h1v1h-1zM27 20h1v1h-1zM29 20h1v1h-1zM31 20h1v1h-1zM32 20h1v1h-1zM6 21h1v1h-1zM7 21h1v1h-1zM9 21h1v1h-1zM14 21h1v1h-1zM18 21h1v1h-1zM25 21h1v1h-1zM26 21h1v1h-1zM29 21h1v1h-1zM30 21h1v1h-1zM32 21h1v1h-1zM4 22h1v1h-1zM6 22h1v1h-1zM9 22h1v1h-1zM10 22h1v1h-1zM12 22h1v1h-1zM14 22h1v1h-1zM16 22h1v1h-1zM17 22h1v1h-1zM20 22h1v1h-1zM21 22h1v1h-1zM28 22h1v1h-1zM31 22h1v1h-1zM32 22h1v1h-1zM5 23h1v1h-1zM8 23h1v1h-1zM11 23h1v1h-1zM12 23h1v1h-1zM15 23h1v1h-1zM19 23h1v1h-1zM21 23h1v1h-1zM27 23h1v1h-1zM29 23h1v1h-1zM31 23h1v1h-1zM4 24h1v1h-1zM6 24h1v1h-1zM7 24h1v1h-1zM8 24h1v1h-1zM9 24h1v1h-1zM10 24h1v1h-1zM12 24h1v1h-1zM15 24h1v1h-1zM16 24h1v1h-1zM20 24h1v1h-1zM21 24h1v1h-1zM24 24h1v1h-1zM25 24h1v1h-1zM26 24h1v1h-1zM27 24h1v1h-1zM28 24h1v1h-1zM12 25h1v1h-1zM13 25h1v1h-1zM14 25h1v1h-1zM16 25h1v1h-1zM17 25h1v1h-1zM21 25h1v1h-1zM22 25h1v1h-1zM24 25h1v1h-1zM28 25h1v1h-1zM30 25h1v1h-1zM31 25h1v1h-1zM32 25h1v1h-1zM4 26h1v1h-1zM5 26h1v1h-1zM6 26h1v1h-1zM7 26h1v1h-1zM8 26h1v1h-1zM9 26h1v1h-1zM10 26h1v1h-1zM13 26h1v1h-1zM14 26h1v1h-1zM18 26h1v1h-1zM21 26h1v1h-1zM23 26h1v1h-1zM24 26h1v1h-1zM26 26h1v1h-1zM28 26h1v1h-1zM29 26h1v1h-1zM31 26h1v1h-1zM32 26h1v1h-1zM4 27h1v1h-1zM10 27h1v1h-1zM15 27h1v1h-1zM17 27h1v1h-1zM18 27h1v1h-1zM19 27h1v1h-1zM20 27h1v1h-1zM21 27h1v1h-1zM24 27h1v1h-1zM28 27h1v1h-1zM29 27h1v1h-1zM32 27h1v1h-1zM4 28h1v1h-1zM6 28h1v1h-1zM7 28h1v1h-1zM8 28h1v1h-1zM10 28h1v1h-1zM12 28h1v1h-1zM15 28h1v1h-1zM18 28h1v1h-1zM20 28h1v1h-1zM21 28h1v1h-1zM24 28h1v1h-1zM25 28h1v1h-1zM26 28h1v1h-1zM27 28h1v1h-1zM28 28h1v1h-1zM31 28h1v1h-1zM4 29h1v1h-1zM6 29h1v1h-1zM7 29h1v1h-1zM8 29h1v1h-1zM10 29h1v1h-1zM13 29h1v1h-1zM15 29h1v1h-1zM18 29h1v1h-1zM20 29h1v1h-1zM24 29h1v1h-1zM28 29h1v1h-1zM30 29h1v1h-1zM4 30h1v1h-1zM6 30h1v1h-1zM7 30h1v1h-1zM8 30h1v1h-1zM10 30h1v1h-1zM12 30h1v1h-1zM13 30h1v1h-1zM16 30h1v1h-1zM18 30h1v1h-1zM20 30h1v1h-1zM22 30h1v1h-1zM23 30h1v1h-1zM25 30h1v1h-1zM27 30h1v1h-1zM28 30h1v1h-1zM29 30h1v1h-1zM32 30h1v1h-1zM4 31h1v1h-1zM10 31h1v1h-1zM14 31h1v1h-1zM16 31h1v1h-1zM17 31h1v1h-1zM19 31h1v1h-1zM20 31h1v1h-1zM21 31h1v1h-1zM22 31h1v1h-1zM23 31h1v1h-1zM24 31h1v1h-1zM25 31h1v1h-1zM31 31h1v1h-1zM4 32h1v1h-1zM5 32h1v1h-1zM6 32h1v1h-1zM7 32h1v1h-1zM8 32h1v1h-1zM9 32h1v1h-1zM10 32h1v1h-1zM12 32h1v1h-1zM13 32h1v1h-1zM15 32h1v1h-1zM16 32h1v1h-1zM17 32h1v1h-1zM21 32h1v1h-1zM23 32h1v1h-1zM24 32h1v1h-1zM28 32h1v1h-1zM31 32h1v1h-1zM32 32h1v1h-1z"/></svg></span>
+        <span class="qr-cap"><span>Scan to sign up</span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.368 19.102c.349 1.049 1.011 1.086 1.478.086l5.309-11.375c.467-1.002.034-1.434-.967-.967l-11.376 5.308c-1.001.467-.963 1.129.085 1.479l4.103 1.367 1.368 4.102z"/></svg></span>
+        <span class="qr-url" id="refQrUrl"></span>
+      </a>
+      </div>
       <div class="notice" id="previewNote" hidden>Preview: the referral link and response sheet are not connected yet. Submissions will not be saved.</div>
     </header>
 
@@ -342,6 +380,7 @@ const DRAFT_KEY = "kairos-builders-draft-v1";
 const connected = !!(CONFIG.formAction && Object.values(CONFIG.entries).every(Boolean));
 const ref = CONFIG.referralUrl || "https://kairos.trade";
 $("#refBtn").href = ref; $("#refBtn2").href = ref;
+$("#refQr").href = ref; $("#refQrUrl").textContent = ref.replace(/^https?:\/\//, "");
 
 /* Build each button's outline, fill, corners and icon (kairos.trade CTA). */
 const NAV_ARROW = '<path d="M10.368 19.102c.349 1.049 1.011 1.086 1.478.086l5.309-11.375c.467-1.002.034-1.434-.967-.967l-11.376 5.308c-1.001.467-.963 1.129.085 1.479l4.103 1.367 1.368 4.102z"/>';
