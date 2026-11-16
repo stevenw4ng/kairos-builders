@@ -115,6 +115,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--lav);bac
 .inline-btn{background:none;border:0;padding:0;color:var(--lav);font:400 12px/1 var(--mono);text-transform:uppercase;cursor:pointer;letter-spacing:.03em;align-self:flex-start}
 .inline-btn:hover{text-decoration:underline;text-underline-offset:3px}
 .count{font:400 12px/1 var(--mono);color:var(--ink-3);text-align:right}
+.count.met{color:var(--lav)}
 
 .submit-row{display:flex;flex-wrap:wrap;gap:16px 24px;align-items:center;justify-content:space-between}
 .saved{font:400 12px/1.4 var(--mono);text-transform:uppercase;color:var(--ink-3);letter-spacing:.03em}
@@ -208,6 +209,7 @@ footer a:hover{color:var(--ink)}
                 <option value="">Select</option><option>2027</option><option>2028</option><option>2029</option><option>2030</option><option>Already graduated</option>
               </select><div class="msg"></div></div>
             <div class="field"><label for="f-link">LinkedIn, resume or portfolio <span class="opt">optional</span></label><input id="f-link" name="link" type="url" inputmode="url" placeholder="https://"><div class="msg"></div></div>
+            <div class="field full"><label for="f-story">Tell us your story <span class="opt">at least 1,000 characters</span></label><textarea id="f-story" name="story" minlength="1000" maxlength="4000" style="min-height:200px" placeholder="Who you are, what you've built, and what brought you to Kairos." required></textarea><div class="count" data-for="f-story" data-min="1000"></div><div class="msg"></div></div>
             <div class="field full" data-group="roleType"><span class="lbl" id="l-role">Looking for</span>
               <div class="pills" role="group" aria-labelledby="l-role">
                 <label class="pill"><input type="checkbox" id="f-role-ft" name="roleType" value="Full-time"><span>Full-time</span></label>
@@ -252,9 +254,9 @@ footer a:hover{color:var(--ink)}
         <div class="label"><b>3 / 3</b>Application</div>
         <div>
           <h2 class="section-head">Your take</h2>
-          <p class="section-sub">Be specific. Tell us what you tried, what got in the way, and what you'd change.</p>
+          <p class="section-sub">Tell us what you tried, what didn't work, and what you'd do differently.</p>
           <div class="grid">
-            <div class="field"><label for="f-improve">One or two ways Kairos could improve</label><textarea id="f-improve" name="improve" maxlength="2000" required></textarea><div class="count" data-for="f-improve"></div><div class="msg"></div></div>
+            <div class="field"><label for="f-improve">One or two ways Kairos could improve <span class="opt">at least 1,500 characters</span></label><textarea id="f-improve" name="improve" minlength="1500" maxlength="5000" style="min-height:240px" required></textarea><div class="count" data-for="f-improve" data-min="1500"></div><div class="msg"></div></div>
             <div class="field"><label for="f-contribute">What can you contribute to Kairos?</label><textarea id="f-contribute" name="contribute" maxlength="2000" placeholder="What you've built, shipped or grown, and where you'd plug in." required></textarea><div class="count" data-for="f-contribute"></div><div class="msg"></div></div>
             <div class="field"><label for="f-other">Anything else we should know? <span class="opt">optional</span></label><textarea id="f-other" name="other" maxlength="2000" style="min-height:96px"></textarea></div>
           </div>
@@ -307,7 +309,8 @@ const CONFIG = {
     "tried": "entry.1469163732",
     "improve": "entry.1025844361",
     "contribute": "entry.607062952",
-    "other": "entry.1242162913"
+    "other": "entry.1242162913",
+    "story": "entry.1853222074"
   }
 };
 /* ------------------------------------------ */
@@ -342,7 +345,7 @@ function restore() {
 restore();
 let t; form.addEventListener("input", () => { clearTimeout(t); t = setTimeout(() => { store("set", values()); $("#savedNote").textContent = "Saved on this device"; }, 300); updateCounts(); });
 form.addEventListener("change", () => store("set", values()));
-function updateCounts() { $$(".count").forEach(c => { const ta = document.getElementById(c.dataset.for); c.textContent = ta.value.length ? ta.value.length + " / 2000" : ""; }); }
+function updateCounts() { $$(".count").forEach(c => { const ta = document.getElementById(c.dataset.for), n = ta.value.length, min = +c.dataset.min || 0, max = ta.maxLength; c.classList.toggle("met", !!min && n >= min); c.textContent = min ? (n >= min ? n.toLocaleString() + " characters, minimum met" : n.toLocaleString() + " / " + min.toLocaleString() + " minimum") : (n ? n.toLocaleString() + " / " + max.toLocaleString() : ""); }); }
 updateCounts();
 $("#sameEmail").addEventListener("click", () => { $("#f-kemail").value = $("#f-email").value.trim(); $("#f-kemail").dispatchEvent(new Event("input", { bubbles: true })); clearErr($("#f-kemail").closest(".field")); });
 
@@ -363,10 +366,11 @@ function validate(v) {
   need("f-link", !v.link || /^https?:\/\/\S+\.\S+/.test(v.link) || /^[\w-]+\.\S+/.test(v.link), "Enter a full link, like https://linkedin.com/in/you.");
   need("f-role-ft", v.roleType.length, "Choose full-time, internship or both.");
   need("f-a1", v.areas.length, "Choose at least one area.");
+  need("f-story", v.story.length >= 1000, v.story ? "Write at least 1,000 characters. You're at " + v.story.length.toLocaleString() + "." : "Tell us your story, in at least 1,000 characters.");
   need("f-confirm", v.confirm === "Yes", "Sign up through the link above first. You must be 18 or older.");
   need("f-kemail", emailOk(v.kairosEmail), v.kairosEmail ? "Enter a valid email." : "Enter the email you signed up with.");
   need("f-t1", v.tried.length, "Choose at least one thing you tried.");
-  need("f-improve", v.improve.length >= 20, v.improve ? "Add a little more detail." : "Tell us one or two ways to improve Kairos.");
+  need("f-improve", v.improve.length >= 1500, v.improve ? "Write at least 1,500 characters. You're at " + v.improve.length.toLocaleString() + "." : "Tell us one or two ways to improve Kairos, in at least 1,500 characters.");
   need("f-contribute", v.contribute.length >= 20, v.contribute ? "Add a little more detail." : "Tell us what you'd contribute.");
   return errs;
 }
