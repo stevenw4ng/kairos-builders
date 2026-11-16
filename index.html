@@ -45,7 +45,8 @@ nav .in{display:flex;align-items:center;justify-content:space-between;gap:16px;h
 .logo{display:flex;align-items:center;text-decoration:none}
 .logo svg{height:26px;width:auto;display:block}
 .navlinks{display:flex;gap:24px;font:400 12px/1 var(--mono);text-transform:uppercase;letter-spacing:.02em;color:var(--lav)}
-.navlinks a{text-decoration:none;opacity:.9}
+.navlinks a{text-decoration:none;opacity:.9;white-space:nowrap}
+@media (max-width:480px){.navlinks{gap:16px}.navlinks .hide-xs{display:none}}
 .navlinks a:hover{opacity:1;text-decoration:underline;text-underline-offset:4px}
 .navlinks .hide-sm{display:none}
 @media (min-width:640px){.navlinks .hide-sm{display:inline}}
@@ -72,11 +73,30 @@ h1{font:300 clamp(36px,6.2vw,60px)/1.04 var(--display);letter-spacing:-.025em;ma
 .step h2{font:300 clamp(24px,3.2vw,30px)/1.2 var(--display);letter-spacing:-.025em;margin:0;color:rgba(255,255,255,.88);max-width:28ch;text-wrap:balance}
 .step p{flex-basis:100%;margin:0;color:var(--ink-2);max-width:62ch}
 
-.btn{display:inline-flex;align-items:center;gap:10px;font:500 12px/1 var(--mono);text-transform:uppercase;letter-spacing:.04em;text-decoration:none;padding:14px 18px;border:1px solid var(--line-2);color:var(--ink);background:transparent;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
-.btn:hover{border-color:var(--lav);background:rgba(223,223,242,.06)}
-.btn.solid{background:var(--lav);color:#0e0e0e;border-color:var(--lav)}
-.btn.solid:hover{background:#fff;border-color:#fff}
-.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.pill input:focus-visible+span,.check input:focus-visible+span{outline:2px solid var(--lav);outline-offset:2px}
+/* Buttons copy kairos.trade's CTA: hairline outline, four + corners, white fill sweeps in on hover,
+   label flips to black through mix-blend-difference, nav arrow turns to point right, slight pull toward the cursor. */
+.btn{position:relative;isolation:isolate;display:inline-flex;align-items:center;justify-content:center;padding:13px 26px;border:0;background:transparent;color:#fff;font:400 12px/1 var(--mono);text-transform:uppercase;letter-spacing:.04em;text-decoration:none;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+.btn .b-line{position:absolute;inset:0;border:1px solid rgba(255,255,255,.3);pointer-events:none;transition:border-color .3s ease-out}
+.btn .b-fill{position:absolute;inset:0;background:#fff;transform:scaleX(0);transform-origin:right center;transition:transform .3s ease-out}
+.btn .b-c{position:absolute;font:300 14px/1 var(--mono);color:#fff;mix-blend-mode:difference;pointer-events:none;user-select:none;transition:transform .3s ease-out}
+.btn .b-c.tl{left:0;top:0;transform:translate(-50%,-50%)}
+.btn .b-c.tr{right:0;top:0;transform:translate(50%,-50%)}
+.btn .b-c.bl{left:0;bottom:0;transform:translate(-50%,50%)}
+.btn .b-c.br{right:0;bottom:0;transform:translate(50%,50%)}
+.btn .b-txt{position:relative;z-index:1;display:inline-flex;align-items:center;gap:9px;color:#fff;mix-blend-mode:difference;transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+.btn .b-ico{width:16px;height:16px;flex:none;transition:transform .3s ease-out}
+.btn:hover .b-fill,.btn:focus-visible .b-fill{transform:scaleX(1);transform-origin:left center}
+.btn:hover .b-line,.btn:focus-visible .b-line{border-color:#fff}
+.btn:hover .b-c.tl,.btn:focus-visible .b-c.tl{transform:translate(calc(-50% - 3px),calc(-50% - 3px))}
+.btn:hover .b-c.tr,.btn:focus-visible .b-c.tr{transform:translate(calc(50% + 3px),calc(-50% - 3px))}
+.btn:hover .b-c.bl,.btn:focus-visible .b-c.bl{transform:translate(calc(-50% - 3px),calc(50% + 3px))}
+.btn:hover .b-c.br,.btn:focus-visible .b-c.br{transform:translate(calc(50% + 3px),calc(50% + 3px))}
+.btn:hover .b-ico,.btn:focus-visible .b-ico{transform:rotate(45deg)}
+.btn[data-icon="down"]:hover .b-ico,.btn[data-icon="down"]:focus-visible .b-ico{transform:translateY(3px)}
+.btn:active .b-txt{transform:scale(.97)}
+.btn:focus-visible{outline:none}
+@media (prefers-reduced-motion:reduce){.btn,.btn *{transition:none!important}}
+input:focus-visible,select:focus-visible,textarea:focus-visible,.pill input:focus-visible+span,.check input:focus-visible+span{outline:2px solid var(--lav);outline-offset:2px}
 .btn[aria-disabled="true"]{opacity:.45;pointer-events:none}
 
 /* form */
@@ -151,7 +171,7 @@ footer a:hover{color:var(--ink)}
 <path d="M223.62,116.85C223.35,116.79 222.17,116.56 221.00,116.34C216.73,115.55 211.92,112.46 209.81,109.16C208.79,107.57 208.28,106.53 207.55,104.62C206.91,102.96 206.88,102.65 206.89,98.38C206.89,93.54 207.02,92.92 208.75,89.48C211.48,84.05 217.50,80.60 227.88,78.53C232.05,77.70 241.53,76.16 244.38,75.85C246.39,75.62 246.83,75.38 246.68,74.54C245.95,70.58 244.43,68.23 241.68,66.84C240.46,66.22 236.61,65.50 234.50,65.50C233.26,65.50 229.66,66.12 228.88,66.47C224.59,68.39 223.62,69.24 221.89,72.62C221.29,73.78 220.64,73.98 219.28,73.43C218.78,73.22 217.03,72.64 215.38,72.14C209.63,70.38 209.13,70.18 209.05,69.57C208.91,68.62 211.32,64.03 213.10,61.81C216.55,57.54 220.51,55.14 226.62,53.62C227.89,53.30 229.80,53.15 233.53,53.06C238.37,52.95 238.89,52.99 242.15,53.62C244.06,53.99 245.73,54.38 245.87,54.48C246.01,54.59 246.45,54.76 246.85,54.85C248.28,55.20 251.23,56.77 252.91,58.09C254.94,59.68 256.64,61.79 257.90,64.30C259.21,66.90 259.73,68.93 260.00,72.50C260.29,76.35 260.32,114.50 260.04,114.95C259.74,115.42 248.90,115.44 248.34,114.97C248.03,114.71 247.97,114.11 248.03,111.64C248.07,109.98 248.02,108.49 247.92,108.32C247.80,108.13 246.99,108.78 245.55,110.21C244.35,111.42 242.86,112.69 242.24,113.05C237.26,115.94 234.34,116.75 228.38,116.88C226.04,116.93 223.90,116.92 223.62,116.85ZM355.62,116.40C349.40,115.08 345.39,112.97 341.09,108.76C336.75,104.50 333.91,98.84 332.58,91.75C331.97,88.48 331.97,81.28 332.59,78.12C333.87,71.56 336.06,66.83 339.79,62.61C343.94,57.91 348.44,55.28 355.25,53.59C357.94,52.92 366.48,52.92 369.38,53.60C373.58,54.57 376.08,55.60 379.17,57.66C387.96,63.51 392.51,72.85 392.50,85.05C392.49,93.82 390.16,100.93 385.41,106.71C381.36,111.62 376.32,114.69 369.62,116.30C368.15,116.65 366.41,116.81 363.00,116.88C358.85,116.98 358.09,116.93 355.62,116.40ZM415.14,116.48C406.90,115.03 401.32,111.36 397.56,104.92C396.98,103.94 395.25,99.02 395.25,98.38C395.25,97.79 396.26,97.32 397.88,97.14C399.20,96.99 401.15,96.69 406.97,95.74C408.81,95.43 409.27,95.67 409.78,97.21C410.52,99.45 412.84,102.07 415.15,103.27C417.75,104.62 418.93,104.87 422.88,104.87C426.22,104.87 426.79,104.81 428.19,104.28C430.06,103.57 431.77,102.13 432.48,100.67C433.17,99.24 433.19,96.85 432.52,95.53C431.45,93.45 429.50,92.59 419.62,89.88C412.08,87.80 409.77,86.99 405.65,84.94C403.65,83.95 402.81,83.34 401.24,81.77C399.11,79.64 398.45,78.54 397.69,75.89C396.72,72.54 397.18,67.16 398.69,64.25C399.93,61.83 402.14,59.17 404.26,57.53C405.48,56.59 408.64,55.05 410.62,54.43C414.23,53.30 415.07,53.18 420.17,53.06C424.63,52.96 425.53,53.01 427.92,53.48C436.24,55.14 442.03,59.11 444.89,65.12C445.41,66.22 445.98,67.69 446.14,68.38C446.31,69.06 446.52,69.81 446.62,70.04C446.90,70.72 445.89,71.13 442.50,71.73C440.78,72.03 438.81,72.39 438.12,72.52C437.44,72.65 436.11,72.91 435.18,73.09C433.08,73.50 432.69,73.28 432.15,71.44C431.73,69.97 429.75,67.53 428.41,66.82C425.65,65.34 425.03,65.20 420.91,65.07C417.06,64.94 416.91,64.96 415.24,65.61C413.42,66.33 411.67,67.77 411.23,68.93C411.09,69.29 410.97,70.19 410.96,70.93C410.93,73.47 412.45,74.77 417.40,76.46C419.79,77.28 423.43,78.33 425.75,78.86C431.52,80.20 438.27,82.86 441.00,84.88C442.58,86.05 444.56,88.18 445.30,89.50C447.91,94.16 447.75,101.27 444.93,106.59C444.17,108.01 441.20,111.26 439.58,112.43C437.44,113.98 433.27,115.70 430.38,116.22C426.53,116.92 425.66,117.00 421.89,116.98C419.12,116.97 417.03,116.81 415.14,116.48ZM147.88,115.31C145.00,115.27 142.55,115.15 142.44,115.04C142.17,114.77 142.19,34.96 142.45,34.70C142.57,34.58 145.44,34.45 148.82,34.40C153.85,34.33 155.08,34.38 155.49,34.67C155.99,35.02 156.00,35.22 156.00,53.01C156.00,72.20 155.98,71.91 157.17,70.31C157.45,69.93 158.50,68.67 159.50,67.50C160.50,66.33 161.90,64.71 162.60,63.89C163.30,63.07 165.40,60.65 167.25,58.51C169.11,56.37 171.29,53.84 172.09,52.88C172.90,51.91 174.02,50.62 174.60,50.00C175.18,49.38 176.48,47.86 177.50,46.62C178.52,45.39 179.72,43.98 180.16,43.50C180.60,43.02 181.73,41.71 182.67,40.60C185.63,37.08 187.36,35.14 187.81,34.80C188.42,34.34 203.67,34.22 204.04,34.67C204.36,35.06 204.16,35.39 202.50,37.19C201.74,38.00 200.22,39.72 199.12,41.00C198.03,42.29 196.84,43.64 196.50,44.01C196.16,44.37 195.26,45.39 194.50,46.26C193.74,47.12 192.96,48.00 192.75,48.21C192.54,48.42 192.04,49.00 191.62,49.51C190.94,50.35 175.14,68.39 172.04,71.86C169.98,74.17 169.97,73.90 172.31,76.57C174.27,78.80 178.22,83.16 180.74,85.88C181.37,86.56 183.74,89.21 186.00,91.75C188.25,94.29 190.68,96.99 191.39,97.75C193.58,100.09 197.32,104.23 198.50,105.62C199.67,107.01 203.56,111.29 205.42,113.25C206.55,114.43 206.81,115.24 206.06,115.26C202.39,115.34 189.84,115.18 189.62,115.05C189.46,114.96 188.21,113.63 186.85,112.11C185.49,110.59 182.86,107.67 181.00,105.62C179.14,103.57 176.46,100.60 175.03,99.01C173.60,97.42 171.57,95.17 170.51,94.00C169.45,92.83 167.42,90.58 166.00,89.00C164.58,87.42 162.49,85.11 161.36,83.88C160.23,82.64 158.70,80.92 157.97,80.06C157.23,79.20 156.48,78.50 156.31,78.50C156.07,78.50 156.00,82.32 156.00,96.76C156.00,111.14 155.93,115.04 155.69,115.11C155.00,115.33 152.88,115.39 147.88,115.31ZM276.88,115.26L271.12,115.12L271.06,85.06L271.00,54.99L271.60,54.76C271.93,54.64 274.77,54.53 277.91,54.52C282.55,54.52 283.72,54.59 284.18,54.89L284.75,55.26L284.75,84.99L284.75,114.72L284.19,115.11C283.89,115.32 283.41,115.48 283.13,115.44C282.85,115.41 280.04,115.33 276.88,115.26ZM297.14,115.12L296.62,114.86L296.56,85.06L296.50,55.26L297.06,54.90C297.51,54.61 298.64,54.54 302.62,54.55C305.38,54.56 307.88,54.66 308.19,54.78C308.74,54.98 308.75,55.07 308.75,58.99C308.75,62.37 308.81,63.00 309.12,63.00C309.33,63.00 309.76,62.58 310.09,62.06C313.02,57.42 320.65,54.03 327.59,54.29C331.17,54.42 331.00,54.08 331.00,61.02C331.00,65.23 330.92,66.77 330.70,66.91C330.53,67.01 328.53,67.11 326.26,67.12C322.36,67.14 322.03,67.18 320.54,67.81C315.96,69.74 313.07,72.66 311.62,76.81C310.37,80.39 310.25,82.38 310.25,99.35C310.25,111.66 310.18,115.04 309.94,115.13C309.24,115.37 297.64,115.37 297.14,115.12ZM235.72,105.13C241.43,103.11 245.37,98.25 246.23,92.18C246.62,89.36 246.59,87.27 246.14,87.10C245.14,86.71 229.67,89.75 226.61,90.93C225.02,91.55 222.55,93.10 221.80,93.97C220.11,95.91 219.64,99.30 220.75,101.52C221.78,103.58 224.12,105.27 226.62,105.77C227.18,105.88 229.03,105.93 230.75,105.88C233.32,105.80 234.21,105.66 235.72,105.13ZM367.96,103.29C372.50,101.69 375.43,98.16 377.16,92.25C377.81,90.03 377.85,89.56 377.86,85.12C377.87,80.91 377.81,80.11 377.27,78.00C376.94,76.69 376.46,75.23 376.21,74.75C375.96,74.27 375.75,73.80 375.75,73.70C375.75,73.27 374.14,71.03 372.97,69.83C370.85,67.63 367.94,66.29 364.78,66.03C362.10,65.81 357.79,66.12 356.88,66.60C356.46,66.82 355.95,67.00 355.74,67.00C354.76,67.00 350.67,70.32 349.88,71.75C347.25,76.54 346.58,79.85 346.82,86.74C346.98,91.21 347.42,93.11 349.09,96.47C350.87,100.06 353.90,102.56 357.75,103.61C359.93,104.21 365.90,104.02 367.96,103.29ZM271.42,45.44C271.03,45.16 271.00,44.54 271.06,39.12L271.12,33.12L277.59,33.06C282.16,33.01 284.16,33.08 284.41,33.28C284.68,33.50 284.75,34.73 284.75,39.27C284.75,44.88 284.74,44.98 284.19,45.36C283.73,45.69 282.67,45.75 277.74,45.75C273.42,45.75 271.73,45.67 271.42,45.44Z" fill="#FFFFFF" fill-rule="evenodd"/>
 </svg></a>
       <div class="navlinks">
-        <a href="#how">How to apply</a>
+        <a href="#how" class="hide-xs">How to apply</a>
         <a href="#apply" class="hide-sm">Application</a>
         <a href="https://kairos.trade" target="_blank" rel="noopener">kairos.trade ↗</a>
       </div>
@@ -172,7 +192,7 @@ footer a:hover{color:var(--ink)}
         <div class="label"><b>01</b>Sign up</div>
         <div class="step">
           <h2>Create your Kairos account through our link.</h2>
-          <a class="btn solid" id="refBtn" href="#" target="_blank" rel="noopener">Open Kairos <span aria-hidden="true">↗</span></a>
+          <a class="btn" id="refBtn" href="#" target="_blank" rel="noopener">Open Kairos</a>
           <p>The link connects your account to your application, so sign up through it. You need to be 18 or older to trade.</p>
         </div>
       </div>
@@ -187,7 +207,7 @@ footer a:hover{color:var(--ink)}
         <div class="label"><b>03</b>Apply</div>
         <div class="step">
           <h2>Tell us one or two ways to improve it, and what you'd contribute.</h2>
-          <a class="btn" href="#apply">Start application <span aria-hidden="true">↓</span></a>
+          <a class="btn" href="#apply" data-icon="down">Start application</a>
           <p>Your answers save on this device as you type, so you can come back after trying the product.</p>
         </div>
       </div>
@@ -267,7 +287,7 @@ footer a:hover{color:var(--ink)}
         <div class="label"></div>
         <div class="submit-row">
           <span class="saved" id="savedNote">Answers save on this device</span>
-          <button class="btn solid" type="submit" id="submitBtn">Submit application <span aria-hidden="true">→</span></button>
+          <button class="btn" type="submit" id="submitBtn">Submit application</button>
           <div class="formerr" id="formErr" role="alert"></div>
         </div>
       </div>
@@ -277,7 +297,7 @@ footer a:hover{color:var(--ink)}
       <span class="chip">Application received</span>
       <h2>Thanks for applying to Kairos.</h2>
       <p>The team reviews every response and will reach out by email if there's a fit. In the meantime, keep trading. The competition leaderboards are live.</p>
-      <p><a class="btn" id="refBtn2" href="#" target="_blank" rel="noopener">Back to Kairos <span aria-hidden="true">↗</span></a></p>
+      <p><a class="btn" id="refBtn2" href="#" target="_blank" rel="noopener">Back to Kairos</a></p>
     </section>
   </main>
 
@@ -322,6 +342,30 @@ const DRAFT_KEY = "kairos-builders-draft-v1";
 const connected = !!(CONFIG.formAction && Object.values(CONFIG.entries).every(Boolean));
 const ref = CONFIG.referralUrl || "https://kairos.trade";
 $("#refBtn").href = ref; $("#refBtn2").href = ref;
+
+/* Build each button's outline, fill, corners and icon (kairos.trade CTA). */
+const NAV_ARROW = '<path d="M10.368 19.102c.349 1.049 1.011 1.086 1.478.086l5.309-11.375c.467-1.002.034-1.434-.967-.967l-11.376 5.308c-1.001.467-.963 1.129.085 1.479l4.103 1.367 1.368 4.102z"/>';
+const DOWN_ARROW = '<path d="M12 4v13m0 0-5-5m5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square"/>';
+$$(".btn").forEach(b => {
+  const label = b.textContent.trim();
+  const icon = b.dataset.icon === "down" ? DOWN_ARROW : NAV_ARROW;
+  b.innerHTML = '<span class="b-line" aria-hidden="true"></span><span class="b-fill" aria-hidden="true"></span>' +
+    ["tl", "tr", "bl", "br"].map(c => '<span class="b-c ' + c + '" aria-hidden="true">+</span>').join("") +
+    '<span class="b-txt"><svg class="b-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' + icon + '</svg><span class="b-label"></span></span>';
+  b.querySelector(".b-label").textContent = label;
+});
+const finePointer = window.matchMedia && matchMedia("(hover: hover) and (pointer: fine)").matches && !matchMedia("(prefers-reduced-motion: reduce)").matches;
+if (finePointer) $$(".btn").forEach(b => {
+  const txt = b.querySelector(".b-txt");
+  b.addEventListener("pointermove", e => {
+    const r = b.getBoundingClientRect();
+    const dx = (e.clientX - r.left - r.width / 2) / r.width, dy = (e.clientY - r.top - r.height / 2) / r.height;
+    b.style.transform = "translate(" + (dx * 10).toFixed(2) + "px," + (dy * 8).toFixed(2) + "px)";
+    txt.style.transform = "translate(" + (dx * 5).toFixed(2) + "px," + (dy * 4).toFixed(2) + "px)";
+  });
+  b.addEventListener("pointerleave", () => { b.style.transform = ""; txt.style.transform = ""; });
+});
+
 if (!connected || !CONFIG.referralUrl) $("#previewNote").hidden = false;
 
 function store(op, v) { try { return op === "get" ? JSON.parse(localStorage.getItem(DRAFT_KEY) || "null") : op === "set" ? localStorage.setItem(DRAFT_KEY, JSON.stringify(v)) : localStorage.removeItem(DRAFT_KEY); } catch (e) { return null; } }
@@ -343,8 +387,9 @@ function restore() {
   }
 }
 restore();
-let t; form.addEventListener("input", () => { clearTimeout(t); t = setTimeout(() => { store("set", values()); $("#savedNote").textContent = "Saved on this device"; }, 300); updateCounts(); });
-form.addEventListener("change", () => store("set", values()));
+let t, submitted = false;
+form.addEventListener("input", () => { updateCounts(); if (submitted) return; clearTimeout(t); t = setTimeout(() => { if (submitted) return; store("set", values()); $("#savedNote").textContent = "Saved on this device"; }, 300); });
+form.addEventListener("change", () => { if (!submitted) store("set", values()); });
 function updateCounts() { $$(".count").forEach(c => { const ta = document.getElementById(c.dataset.for), n = ta.value.length, min = +c.dataset.min || 0, max = ta.maxLength; c.classList.toggle("met", !!min && n >= min); c.textContent = min ? (n >= min ? n.toLocaleString() + " characters, minimum met" : n.toLocaleString() + " / " + min.toLocaleString() + " minimum") : (n ? n.toLocaleString() + " / " + max.toLocaleString() : ""); }); }
 updateCounts();
 $("#sameEmail").addEventListener("click", () => { $("#f-kemail").value = $("#f-email").value.trim(); $("#f-kemail").dispatchEvent(new Event("input", { bubbles: true })); clearErr($("#f-kemail").closest(".field")); });
@@ -384,17 +429,17 @@ form.addEventListener("submit", async e => {
   if (errs.length) { fe.textContent = errs.length === 1 ? "One answer needs a fix." : errs.length + " answers need a fix."; errs[0].scrollIntoView({ block: "center" }); const i = $("input,select,textarea", errs[0]); i && i.focus({ preventScroll: true }); return; }
   if (!connected) { fe.textContent = "This form isn't connected to a response sheet yet, so nothing was sent."; return; }
   fe.textContent = "";
-  const btn = $("#submitBtn"); btn.setAttribute("aria-disabled", "true"); btn.firstChild.textContent = "Submitting ";
+  const btn = $("#submitBtn"); btn.setAttribute("aria-disabled", "true"); btn.querySelector(".b-label").textContent = "Submitting";
   const body = new URLSearchParams();
   for (const [k, id] of Object.entries(CONFIG.entries)) { const val = v[k]; if (Array.isArray(val)) val.forEach(x => body.append(id, x)); else if (val) body.append(id, val); }
   try {
     await fetch(CONFIG.formAction, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body });
-    store("del");
+    submitted = true; clearTimeout(t); store("del");
     form.hidden = true; $("#how").hidden = true;
     const d = $("#done"); d.hidden = false; d.focus(); window.scrollTo({ top: 0 });
   } catch (err) {
     fe.textContent = "We couldn't send your application. Check your connection and try again. Your answers are still here.";
-    btn.removeAttribute("aria-disabled"); btn.firstChild.textContent = "Submit application ";
+    btn.removeAttribute("aria-disabled"); btn.querySelector(".b-label").textContent = "Submit application";
   }
 });
 </script>
