@@ -164,6 +164,29 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--lav);bac
 .inline-btn{background:none;border:0;padding:0;color:var(--lav);font:400 12px/1 var(--mono);text-transform:uppercase;cursor:pointer;letter-spacing:.03em;align-self:flex-start}
 .inline-btn:hover{text-decoration:underline;text-underline-offset:3px}
 .count{font:400 12px/1 var(--mono);color:var(--ink-3);text-align:right}
+/* Multiple optional links */
+.links{display:flex;flex-direction:column;gap:8px}
+.link-row{display:flex;gap:8px}
+.link-row input{flex:1;min-width:0}
+.link-x{flex:none;width:48px;background:none;border:1px solid var(--line-2);color:var(--ink-3);font:300 18px/1 var(--mono);cursor:pointer;transition:border-color .15s,color .15s}
+.link-x:hover,.link-x:focus-visible{border-color:rgba(255,255,255,.32);color:var(--ink);outline:none}
+.field.bad .link-row input.bad-in{border-color:var(--err)}
+.field.bad .link-row input:not(.bad-in){border-color:var(--line-2)}
+/* Resume drop zone: hairline box, + corners, lavender on hover or drag */
+.field>label.drop{text-transform:none;letter-spacing:0;color:var(--ink);font:400 15px/1.35 var(--body)}
+.drop{position:relative;display:flex;align-items:center;gap:16px;padding:22px 20px;border:1px dashed rgba(255,255,255,.22);background:var(--field);cursor:pointer;transition:border-color .2s,background .2s}
+.drop input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.drop:hover,.drop.over,.drop:focus-within{border-color:var(--lav);background:rgba(223,223,242,.04)}
+.drop .d-ico{flex:none;width:40px;height:40px;display:grid;place-items:center;border:1px solid var(--line-2);color:var(--lav)}
+.drop .d-ico svg{width:18px;height:18px}
+.drop .d-main{display:block;font:400 15px/1.35 var(--body);color:var(--ink);word-break:break-all}
+.drop .d-main b{font-weight:500;color:var(--lav)}
+.drop .d-sub{display:block;margin-top:4px;font:400 12px/1.3 var(--mono);text-transform:uppercase;letter-spacing:.03em;color:var(--ink-3)}
+.drop.has{border-style:solid;border-color:rgba(255,255,255,.3)}
+.drop.has .d-ico{background:var(--lav);border-color:var(--lav);color:#0e0e0e}
+.field.bad .drop{border-color:var(--err)}
+.resume-actions{display:flex;gap:20px}
+.resume-actions[hidden],.inline-btn[hidden]{display:none}
 .count.met{color:var(--lav)}
 
 .submit-row{display:flex;flex-wrap:wrap;gap:16px 24px;align-items:center;justify-content:space-between}
@@ -266,7 +289,17 @@ footer a:hover{color:var(--ink)}
               <select id="f-grad" name="grad" required>
                 <option value="">Select</option><option>2027</option><option>2028</option><option>2029</option><option>2030</option><option>Already graduated</option>
               </select><div class="msg"></div></div>
-            <div class="field"><label for="f-link">LinkedIn, resume or portfolio <span class="opt">optional</span></label><input id="f-link" name="link" type="url" inputmode="url" placeholder="https://"><div class="msg"></div></div>
+            <div class="field" id="linksField"><label for="f-link">LinkedIn, portfolio or website <span class="opt">optional</span></label>
+              <div class="links" id="links"><div class="link-row"><input id="f-link" class="link-in" type="url" inputmode="url" placeholder="https://" autocomplete="url"></div></div>
+              <button type="button" class="inline-btn" id="addLink">+ Add another link</button><div class="msg"></div></div>
+            <div class="field full" id="resumeField"><span class="lbl" id="l-resume">Resume</span>
+              <label class="drop" id="drop">
+                <input id="f-resume" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" aria-labelledby="l-resume" aria-describedby="resumeSub">
+                <span class="d-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"><path d="M12 16V4m0 0-5 5m5-5 5 5M4 20h16"/></svg></span>
+                <span><span class="d-main" id="resumeMain"><b>Choose a file</b> or drag it here</span><span class="d-sub" id="resumeSub">PDF or Word, up to 5 MB</span></span>
+              </label>
+              <div class="resume-actions" id="resumeActions" hidden><button type="button" class="inline-btn" id="resumeClear">Remove file</button></div>
+              <div class="msg"></div></div>
             <div class="field full"><label for="f-story">Tell us your story <span class="opt">at least 1,000 characters</span></label><textarea id="f-story" name="story" minlength="1000" maxlength="4000" style="min-height:200px" placeholder="Who you are, what you've built, and what brought you to Kairos." required></textarea><div class="count" data-for="f-story" data-min="1000"></div><div class="msg"></div></div>
             <div class="field full" data-group="roleType"><span class="lbl" id="l-role">Looking for</span>
               <div class="pills" role="group" aria-labelledby="l-role">
@@ -368,8 +401,10 @@ const CONFIG = {
     "improve": "entry.1025844361",
     "contribute": "entry.607062952",
     "other": "entry.1242162913",
-    "story": "entry.1853222074"
-  }
+    "story": "entry.1853222074",
+    "resume": "entry.1885888910"
+  },
+  "uploadUrl": "https://script.google.com/macros/s/AKfycbwNpnAMV2UTcieCHtn_4oUbMQ6YufbVEGW2X-BW9Dv6cpgnmEaaQIRsjBzs4e7-ARw/exec"
 };
 /* ------------------------------------------ */
 
@@ -415,6 +450,8 @@ function values() {
     if (el.type === "checkbox") { if (el.name === "confirm") v.confirm = el.checked ? "Yes" : ""; else { v[el.name] = v[el.name] || []; if (el.checked) v[el.name].push(el.value); } }
     else v[el.name] = el.value.trim();
   }
+  v.links = $$(".link-in").map(i => i.value.trim()).filter(Boolean).map(l => /^https?:\/\//i.test(l) ? l : "https://" + l);
+  v.link = v.links.join("\n");
   return v;
 }
 function restore() {
@@ -424,9 +461,58 @@ function restore() {
     if (el.type === "checkbox") el.checked = el.name === "confirm" ? d.confirm === "Yes" : (d[el.name] || []).includes(el.value);
     else el.value = d[el.name];
   }
+  (d.links || []).forEach((l, i) => { if (i) addLinkRow(); $$(".link-in")[i].value = l; });
 }
+/* Optional links: up to five rows, each extra row removable */
+const MAX_LINKS = 5;
+function syncAddLink() { $("#addLink").hidden = $$(".link-in").length >= MAX_LINKS; }
+function addLinkRow(focus) {
+  if ($$(".link-in").length >= MAX_LINKS) return;
+  const row = document.createElement("div"); row.className = "link-row";
+  row.innerHTML = '<input class="link-in" type="url" inputmode="url" placeholder="https://" aria-label="Another link"><button type="button" class="link-x" aria-label="Remove this link">&times;</button>';
+  $("#links").appendChild(row); syncAddLink();
+  if (focus) row.querySelector("input").focus();
+}
+$("#addLink").addEventListener("click", () => addLinkRow(true));
+$("#links").addEventListener("click", e => { const x = e.target.closest(".link-x"); if (!x) return; x.parentElement.remove(); syncAddLink(); form.dispatchEvent(new Event("input")); $("#f-link").focus(); });
 restore();
-let t, submitted = false;
+syncAddLink();
+
+/* Resume: required, PDF or Word, 5 MB max. Files can't be kept in the draft, so it is re-attached after a reload. */
+const MAX_BYTES = 5 * 1024 * 1024;
+const MIME = { pdf: "application/pdf", doc: "application/msword", docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" };
+const resumeIn = $("#f-resume"), drop = $("#drop");
+const fileExt = f => (f.name.split(".").pop() || "").toLowerCase();
+function resumeProblem(f) {
+  if (!f) return "Attach your resume as a PDF or Word file.";
+  if (!MIME[fileExt(f)]) return "Use a PDF or Word file (.pdf, .doc or .docx).";
+  if (f.size > MAX_BYTES) return "That file is " + (f.size / 1048576).toFixed(1) + " MB. Keep it under 5 MB.";
+  if (!f.size) return "That file looks empty. Try another copy.";
+  return "";
+}
+function showResume() {
+  const f = resumeIn.files[0], bad = f && resumeProblem(f);
+  drop.classList.toggle("has", !!f && !bad);
+  $("#resumeActions").hidden = !f;
+  if (f) { $("#resumeMain").textContent = f.name; $("#resumeSub").textContent = (f.size / 1048576 < 0.1 ? Math.max(1, Math.round(f.size / 1024)) + " KB" : (f.size / 1048576).toFixed(1) + " MB") + " · Click to replace"; }
+  else { $("#resumeMain").innerHTML = "<b>Choose a file</b> or drag it here"; $("#resumeSub").textContent = "PDF or Word, up to 5 MB"; }
+  const fld = $("#resumeField"); if (bad) setErr(fld, bad); else if (f) clearErr(fld);
+}
+resumeIn.addEventListener("change", showResume);
+["dragenter", "dragover"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave", "drop"].forEach(ev => drop.addEventListener(ev, () => drop.classList.remove("over")));
+drop.addEventListener("drop", e => { e.preventDefault(); if (e.dataTransfer.files.length) { resumeIn.files = e.dataTransfer.files; showResume(); } });
+$("#resumeClear").addEventListener("click", () => { resumeIn.value = ""; showResume(); resumeIn.focus(); });
+let uploaded = null;  // {key, url}: reuse on a retry so the same file isn't uploaded twice
+function uploadResume(f, name) {
+  const key = [f.name, f.size, f.lastModified].join("|");
+  if (uploaded && uploaded.key === key) return Promise.resolve(uploaded.url);
+  return new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(",")[1]); r.onerror = () => no(new Error("read")); r.readAsDataURL(f); })
+    .then(data => fetch(CONFIG.uploadUrl, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ name, filename: f.name, type: MIME[fileExt(f)], data }) }))
+    .then(res => res.json())
+    .then(j => { if (!j.ok) throw new Error(j.error || "upload"); uploaded = { key, url: j.url }; return j.url; });
+}
+let t, submitted = false, busy = false;
 form.addEventListener("input", () => { updateCounts(); if (submitted) return; clearTimeout(t); t = setTimeout(() => { if (submitted) return; store("set", values()); $("#savedNote").textContent = "Saved on this device"; }, 300); });
 form.addEventListener("change", () => { if (!submitted) store("set", values()); });
 function updateCounts() { $$(".count").forEach(c => { const ta = document.getElementById(c.dataset.for), n = ta.value.length, min = +c.dataset.min || 0, max = ta.maxLength; c.classList.toggle("met", !!min && n >= min); c.textContent = min ? (n >= min ? n.toLocaleString() + " characters, minimum met" : n.toLocaleString() + " / " + min.toLocaleString() + " minimum") : (n ? n.toLocaleString() + " / " + max.toLocaleString() : ""); }); }
@@ -447,7 +533,11 @@ function validate(v) {
   need("f-school", v.school, "Enter your school.");
   need("f-major", v.major, "Enter your major.");
   need("f-grad", v.grad, "Choose your graduation year.");
-  need("f-link", !v.link || /^https?:\/\/\S+\.\S+/.test(v.link) || /^[\w-]+\.\S+/.test(v.link), "Enter a full link, like https://linkedin.com/in/you.");
+  $$(".link-in").forEach(i => i.classList.remove("bad-in"));
+  const badLinks = $$(".link-in").filter(i => i.value.trim() && !/^(https?:\/\/)?[^\s.]+\.\S+$/i.test(i.value.trim()));
+  badLinks.forEach(i => i.classList.add("bad-in"));
+  need("f-link", !badLinks.length, "Enter full links, like https://linkedin.com/in/you.");
+  need("f-resume", !resumeProblem(resumeIn.files[0]), resumeProblem(resumeIn.files[0]));
   need("f-role-ft", v.roleType.length, "Choose full-time, internship or both.");
   need("f-a1", v.areas.length, "Choose at least one area.");
   need("f-story", v.story.length >= 1000, v.story ? "Write at least 1,000 characters. You're at " + v.story.length.toLocaleString() + "." : "Tell us your story, in at least 1,000 characters.");
@@ -461,14 +551,23 @@ function validate(v) {
 
 form.addEventListener("submit", async e => {
   e.preventDefault();
+  if (busy) return;
   const v = values();
-  if (v.link && !/^https?:\/\//.test(v.link)) v.link = "https://" + v.link;
   const errs = validate(v);
   const fe = $("#formErr");
   if (errs.length) { fe.textContent = errs.length === 1 ? "One answer needs a fix." : errs.length + " answers need a fix."; errs[0].scrollIntoView({ block: "center" }); const i = $("input,select,textarea", errs[0]); i && i.focus({ preventScroll: true }); return; }
-  if (!connected) { fe.textContent = "This form isn't connected to a response sheet yet, so nothing was sent."; return; }
+  if (!connected || !CONFIG.uploadUrl) { fe.textContent = "This form isn't connected to a response sheet yet, so nothing was sent."; return; }
   fe.textContent = "";
-  const btn = $("#submitBtn"); btn.setAttribute("aria-disabled", "true"); btn.querySelector(".b-label").textContent = "Submitting";
+  const btn = $("#submitBtn"); busy = true; btn.setAttribute("aria-disabled", "true");
+  const reset = () => { busy = false; btn.removeAttribute("aria-disabled"); btn.querySelector(".b-label").textContent = "Submit application"; };
+  btn.querySelector(".b-label").textContent = "Uploading resume";
+  try { v.resume = await uploadResume(resumeIn.files[0], v.name); }
+  catch (err) {
+    const why = err && err.message && !/^(read|upload|Failed to fetch|Load failed|NetworkError.*)$/i.test(err.message) ? " (" + err.message + ")" : "";
+    setErr($("#resumeField"), "We couldn't upload this file" + why + ". Try again, or save it as a PDF.");
+    fe.textContent = "Your resume didn't upload. Your answers are still here."; reset(); return;
+  }
+  btn.querySelector(".b-label").textContent = "Submitting";
   const body = new URLSearchParams();
   for (const [k, id] of Object.entries(CONFIG.entries)) { const val = v[k]; if (Array.isArray(val)) val.forEach(x => body.append(id, x)); else if (val) body.append(id, val); }
   try {
@@ -478,7 +577,7 @@ form.addEventListener("submit", async e => {
     const d = $("#done"); d.hidden = false; d.focus(); window.scrollTo({ top: 0 });
   } catch (err) {
     fe.textContent = "We couldn't send your application. Check your connection and try again. Your answers are still here.";
-    btn.removeAttribute("aria-disabled"); btn.querySelector(".b-label").textContent = "Submit application";
+    reset();
   }
 });
 </script>
